@@ -1,0 +1,9 @@
+base/*
+data/*
+models/*
+__pycache__/*
+final_test/*
+
+# wandb
+artifacts/*
+wandb/*
