@@ -30,17 +30,17 @@ parameters:
   num_classes:
     value: 4
   lr:
-    values: [1e-5]
+    value: 1e-5
   num_epochs:
-    values: [30]
+    value: 30
   batch_size:
-    values: [4]
+    value: 4
   optimizer:
-    values: ["adam"]
+    value: "adam"
   weight_decay:
-    values: [0.0001]
+    value: 0.0001
   momentum:
-    values: [0.9]
+    value: 0.9
     
 command:
   - ${env}

@@ -8,7 +8,6 @@ parameters:
     value: "alexnet"
   dataset: 
     value: "hutech-dataset:latest"
-
   lr:
     distribution: categorical
     values:
