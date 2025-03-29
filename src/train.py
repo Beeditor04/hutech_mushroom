@@ -5,21 +5,21 @@ import torchvision.transforms as transforms
 from torchvision import datasets
 from torch.utils.data import DataLoader
 import torch.optim as optim
-
+import time
 from tqdm import tqdm
 
 import os
 import wandb
 
 # src function
-from models.mini_alexnet import MiniAlexNet
+
+## helper
 from loader.loader import get_data_loader
 from utils.metrics import compute_metrics
-from utils.helper import load_config
+from utils.helper import load_config, get_model
+from parsers.parser_train import parse_args
 
-import time
-wandb.login()
-wandb.require("core")
+# device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def train_one_epoch(model, loader, optimizer, criterion):
@@ -27,7 +27,7 @@ def train_one_epoch(model, loader, optimizer, criterion):
     dataset_size = len(loader.dataset)
     running_loss = 0.0
     running_corrects = 0
-    for images, labels in loader:
+    for images, labels in tqdm(loader):
         images, labels = images.to(device), labels.to(device)
         
         optimizer.zero_grad()
@@ -50,7 +50,7 @@ def validate(model, loader, criterion):
     val_running_loss = 0.0
     val_running_corrects = 0
     with torch.no_grad():
-        for images, labels in loader:
+        for images, labels in tqdm(loader):
             images, labels = images.to(device), labels.to(device)
 
             outputs = model(images)
@@ -97,24 +97,30 @@ def get_optimizer(model, config):
     return optimizer
 
 def trainer(config=None):
-    #setup wandb
-    if config is None:  # no sweep config, load from file
-        config_path = "../config/exp.yaml"
-        config = load_config(config_path)
-        
-    run = wandb.init(project="minialexnet", config=config)
-    config = wandb.config
+    args = parse_args()
 
-    ## versioning dataset
-    artifact_data = run.use_artifact("beehappy2554-bosch-global/minialexnet/minialexnet-dataset:latest", type='dataset')
+    if config is None:  # no sweep config, load from file
+        config_path = args.config if args.config is not None else "../config/exp.yaml"
+        config = load_config(config_path)
+    print("HERE config!", config)
+    PROJECT = config['project'] if config['project'] is not None else args.project
+    DATASET = config['dataset'] if config['dataset'] is not None else args.dataset
+
+    #setup wandb
+    run = wandb.init(project=PROJECT, config=config)
+    config = wandb.config
+    print("HERE config!", config)
+
+    ## versioning datasets
+    artifact_data = run.use_artifact(f"beehappy2554-bosch-global/{PROJECT}/{DATASET}", type='dataset')
     artifact_data_dir = artifact_data.download()
     print(config)
     # build dataset
-    train_loader = get_data_loader(artifact_data_dir, config['batch_size'], type="train")
-    val_loader = get_data_loader(artifact_data_dir, config['batch_size'], type="val")
+    train_loader = get_data_loader(artifact_data_dir, config, mode="train")
+    val_loader = get_data_loader(artifact_data_dir, config, mode="val")
 
     # build model
-    model = MiniAlexNet()
+    model = get_model(config['model'], num_classes=len(train_loader.dataset.classes))
     model.to(device)
     optimizer = get_optimizer(model, config)
     criterion = nn.CrossEntropyLoss()
@@ -131,7 +137,7 @@ def trainer(config=None):
     print(f"Dataset: {len(train_loader.dataset)} training samples, {len(val_loader.dataset)} validation samples")
 
     # train
-    for epoch in tqdm(range(EPOCHS)):
+    for epoch in range(EPOCHS):
         train_loss, train_acc = train_one_epoch(model, train_loader, optimizer, criterion)
 
     # eval
@@ -140,22 +146,21 @@ def trainer(config=None):
         run.log({"train_loss": train_loss, "val_loss": val_loss, "train_acc": train_acc, "val_acc": val_acc})
 
     # final verdict: test
-    test_loader = get_data_loader(artifact_data_dir, config['batch_size'], type="test")
+    test_loader = get_data_loader(artifact_data_dir, config, mode="test")
     preds, labels = test(model, test_loader)
     class_names = test_loader.dataset.classes   
     accuracy = compute_metrics(preds, labels, class_names)
-    run.log({"test_accuracy": accuracy,
-             "confusion_matrix": wandb.plot.confusion_matrix(y_true=labels, preds=preds, class_names=class_names)})
+    run.log({"test_accuracy": accuracy})
    
     # Save model
     model_dir = "../models"
     os.makedirs(model_dir, exist_ok=True)
-    model_path = os.path.join(model_dir, f"minialexnet-{timestamp}.pt")
+    model_path = os.path.join(model_dir, f"{config['model']}-{timestamp}.pt")
     torch.save(model.state_dict(), model_path)
     print(f"Model saved at {model_path}")
 
     # Save model as artifact
-    artifact_model = wandb.Artifact("minialexnet-model", type="model")
+    artifact_model = wandb.Artifact(f"{config['model']}-model", type="model")
     artifact_model.add_file(model_path)
     run.log_artifact(artifact_model)
 
