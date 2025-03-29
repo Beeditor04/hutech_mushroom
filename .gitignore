@@ -7,3 +7,7 @@ final_test/*
 # wandb
 artifacts/*
 wandb/*
+
+# file
+*.pyc
+*.env
