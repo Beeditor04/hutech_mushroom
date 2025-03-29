@@ -16,7 +16,7 @@ import wandb
 ## helper
 from loader.loader import get_data_loader
 from utils.metrics import compute_metrics
-from utils.helper import load_config, get_model
+from utils.helper import load_config, get_model, get_optimizer, get_scheduler, EarlyStopping
 from parsers.parser_train import parse_args
 
 # device
@@ -80,21 +80,6 @@ def test(model, loader):
             all_labels.extend(labels.cpu().numpy()) 
         return all_preds, all_labels
 
-def get_optimizer(model, config):
-    LR = float(config['lr'])
-    WEIGHT_DECAY = config['weight_decay']
-    MOMENTUM = config['momentum']
-    OPTIMIZER = config['optimizer']
-
-    if OPTIMIZER == "adam":
-        optimizer = optim.Adam(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
-    elif OPTIMIZER == "sgd":
-        optimizer = optim.SGD(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY, momentum=MOMENTUM)
-    elif OPTIMIZER == "adamw":
-        optimizer = optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
-    else:
-        raise ValueError(f"Invalid optimizer name: {OPTIMIZER}")
-    return optimizer
 
 def trainer(config=None):
     args = parse_args()
@@ -122,9 +107,12 @@ def trainer(config=None):
     # build model
     model = get_model(config['model'], num_classes=len(train_loader.dataset.classes))
     model.to(device)
+
+    # build optimizer
     optimizer = get_optimizer(model, config)
     criterion = nn.CrossEntropyLoss()
-
+    scheduler = get_scheduler(optimizer, config)
+    early_stopping = EarlyStopping(patience=config['es_patience'])
     # setup log
     EPOCHS = config['num_epochs']
 
@@ -134,6 +122,9 @@ def trainer(config=None):
     print(f"Number of epochs: {EPOCHS}")
     print(f"Optimizer: {optimizer}")
     print(f"Criterion: {criterion}")
+    print(f"Scheduler: {scheduler}")
+    print(f"Batch size: {config['batch_size']}")
+    print(f"Early stopping: {config['es_patience']}")
     print(f"Dataset: {len(train_loader.dataset)} training samples, {len(val_loader.dataset)} validation samples")
 
     # train
@@ -142,15 +133,36 @@ def trainer(config=None):
 
     # eval
         val_loss, val_acc = validate(model, val_loader, criterion)
+        if scheduler is not None:
+            scheduler.step(val_loss)
+
+        # early stopping
+        early_stopping(val_loss)
         print(f"[Epoch {epoch+1}/{EPOCHS}] Train Loss: {train_loss:.4f} Val Loss: {val_loss:.4f} Train Acc: {train_acc:.4f} Val Acc: {val_acc:.4f}")
         run.log({"train_loss": train_loss, "val_loss": val_loss, "train_acc": train_acc, "val_acc": val_acc})
 
     # final verdict: test
+    start_time = time.time()
+    print("Testing model...")
     test_loader = get_data_loader(artifact_data_dir, config, mode="test")
     preds, labels = test(model, test_loader)
+    end_time = time.time()
+
+    inference_time = end_time - start_time
     class_names = test_loader.dataset.classes   
     accuracy = compute_metrics(preds, labels, class_names)
-    run.log({"test_accuracy": accuracy})
+    
+    print(f"Test time: {inference_time:.2f} seconds")
+    print(f"Test Accuracy: {accuracy:.4f}")
+
+    table = wandb.Table(columns=["inference_time", "test_accuracy"])
+    table.add_data(inference_time, accuracy)
+    run.log({"test_acc vs time": wandb.plot.scatter(
+        table, 
+        "inference_time", 
+        "test_accuracy", 
+        title="Inference Time vs Test Accuracy"
+    )})
    
     # Save model
     model_dir = "../models"

@@ -34,11 +34,16 @@ def get_data_loader(dir, config, mode):
     base_transform = transforms.Compose(transform_list)
     if mode in ("test", "val"):
         base_transform = transforms.Compose([
-            transforms.Resize(224),
+            transforms.Resize(config['resize']),
             transforms.ToTensor()
         ])
+
+    # dataset
     df_path = os.path.join(dir, mode)
     dataset = datasets.ImageFolder(df_path, transform=base_transform)  
-    loader = DataLoader(dataset, batch_size=config["batch_size"], shuffle=True)
+    
+    # dataloader
+    BATCH_SIZE = config["batch_size"] if mode == "train" else 1
+    loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
 
     return loader
