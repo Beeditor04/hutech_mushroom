@@ -10,5 +10,5 @@ def create_parser():
 
 def parse_args():
     parser = create_parser()
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
     return args

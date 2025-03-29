@@ -83,20 +83,26 @@ def test(model, loader):
 
 def trainer(config=None):
     args = parse_args()
-    print("HERE", config)
+    print("args", args)
     if args.config is not None:  # no sweep config, load from file
         config_path = args.config 
         config = load_config(config_path)
-    
-    PROJECT = config['project'] if config['project'] is not None else args.project
-    DATASET = config['dataset'] if config['dataset'] is not None else args.dataset
+        print("HERE config!", config)
 
+
+    PROJECT = "hutech_mushroom"
+    run = None
     #setup wandb
-    run = wandb.init(project=PROJECT)
-    if run.config is None:
-        run.config.update(config)
-    config = wandb.config
+    if config is None:
+        run = wandb.init(project=PROJECT)
+    else: 
+        run = wandb.init(project=PROJECT, config=config)
+
+    print("here config!!!", config)
+    config = run.config
     print("HERE config!", config)
+
+    DATASET = config['dataset']
 
     ## versioning datasets
     artifact_data = run.use_artifact(f"beehappy2554-bosch-global/{PROJECT}/{DATASET}", type='dataset')

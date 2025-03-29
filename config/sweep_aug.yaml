@@ -37,6 +37,10 @@ parameters:
     value: 4
   optimizer:
     value: "adam"
+  scheduler: 
+    value: "reduce_lr_on_plateau"
+  es_patience: 
+    value: 10
   weight_decay:
     value: 0.0001
   momentum:
