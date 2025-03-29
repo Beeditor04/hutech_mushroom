@@ -1,0 +1,13 @@
+matplotlib                   
+numpy                        
+pandas                       
+pycparser                   
+pyparsing                    
+PyYAML                       
+python-dotenv                
+scikit-learn                  
+torch                        
+torchaudio                    
+torchinfo                     
+torchvision                   
+timm

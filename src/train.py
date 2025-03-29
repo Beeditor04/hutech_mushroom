@@ -124,7 +124,7 @@ def trainer(config=None):
     early_stopping = EarlyStopping(patience=config['es_patience'])
     # setup log
     EPOCHS = config['num_epochs']
-
+    TOTAL_PARAMS = sum(p.numel() for p in model.parameters() if p.requires_grad)
     timestamp = time.strftime("%Y-%m-%d-%H:%M:%S")
     print("Training model...")
     print(f"Device: {device}")
@@ -132,6 +132,7 @@ def trainer(config=None):
     print(f"Optimizer: {optimizer}")
     print(f"Criterion: {criterion}")
     print(f"Scheduler: {scheduler}")
+    print(f"Total parameters: {TOTAL_PARAMS}")
     print(f"Batch size: {config['batch_size']}")
     print(f"Early stopping: {config['es_patience']}")
     print(f"Dataset: {len(train_loader.dataset)} training samples, {len(val_loader.dataset)} validation samples")

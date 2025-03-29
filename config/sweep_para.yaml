@@ -1,5 +1,6 @@
 program: train.py 
 method: bayes
+name: para_sweep
 metric:
   name: test_accuracy
   goal: maximize
@@ -8,6 +9,12 @@ parameters:
     value: "alexnet"
   dataset: 
     value: "hutech-dataset:latest"
+  scheduler: 
+    value: "reduce_lr_on_plateau"
+  es_patience: 
+    value: 10
+
+  ## optimizing
   lr:
     distribution: categorical
     values:
@@ -42,13 +49,9 @@ parameters:
     values: [0.5]
   random_rotation:
     values: [90]
-  brightness:
-    values: [0.2]
   contrast:
     values: [0.2]
   saturation:
-    values: [0.2]
-  hue:
     values: [0.2]
 
 command:

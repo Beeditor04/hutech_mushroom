@@ -1,0 +1,49 @@
+program: train.py
+name: model_sweep
+method: grid
+metric:
+  name: test_accuracy
+  goal: maximize
+parameters:
+  # model (sweep)
+  model:
+    values: ["alexnet", "convnext", "densenet", "efficientnet", "mobilenet", "resnet", "vit", "inception", "negnet", "resnext", "shufflenet"]
+  dataset:
+    value: "hutech-dataset:latest"
+  # augmentation 
+  resize:
+    values: [224]
+  horizontal_flip:
+    values: [0.5]
+  vertical_flip:
+    values: [0.5]
+  random_rotation:
+    values: [90]
+  contrast:
+    values: [0.2]
+  saturation:
+    values: [0.2]
+  # hyperparameters (fixed)
+  num_classes:
+    value: 4
+  lr:
+    value: 1e-5
+  num_epochs:
+    value: 30
+  batch_size:
+    value: 4
+  optimizer:
+    value: "adam"
+  scheduler: 
+    value: "reduce_lr_on_plateau"
+  es_patience: 
+    value: 10
+  weight_decay:
+    value: 0.0001
+  momentum:
+    value: 0.9
+    
+command:
+  - ${env}
+  - python
+  - ${program}
