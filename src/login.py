@@ -1,6 +1,8 @@
 import os
 import wandb
+from dotenv import load_dotenv
 
+load_dotenv()
 # Read the WandB API key from the environment variable
 api_key = os.getenv("WANDB_API_KEY")
 if api_key:

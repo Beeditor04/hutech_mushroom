@@ -1,5 +1,5 @@
 import argparse
-
+import sys
 def create_parser():
     parser = argparse.ArgumentParser(description="Train with different models.")
     parser.add_argument("--model", default="alexnet", type=str, help="Model name to train")
@@ -9,6 +9,8 @@ def create_parser():
     return parser
 
 def parse_args():
+
+    sys.argv = [sys.argv[0]]
     parser = create_parser()
     args, unknown = parser.parse_known_args()
     return args

@@ -145,9 +145,11 @@ def trainer(config=None):
             scheduler.step(val_loss)
 
         # early stopping
-        early_stopping(val_loss)
         print(f"[Epoch {epoch+1}/{EPOCHS}] Train Loss: {train_loss:.4f} Val Loss: {val_loss:.4f} Train Acc: {train_acc:.4f} Val Acc: {val_acc:.4f}")
         run.log({"train_loss": train_loss, "val_loss": val_loss, "train_acc": train_acc, "val_acc": val_acc})
+        if early_stopping(val_loss):
+            print("Early stopping triggered")
+            break
 
     # final verdict: test
     start_time = time.time()
