@@ -83,16 +83,18 @@ def test(model, loader):
 
 def trainer(config=None):
     args = parse_args()
-
-    if config is None:  # no sweep config, load from file
-        config_path = args.config if args.config is not None else "../config/exp.yaml"
+    print("HERE", config)
+    if args.config is not None:  # no sweep config, load from file
+        config_path = args.config 
         config = load_config(config_path)
-    print("HERE config!", config)
+    
     PROJECT = config['project'] if config['project'] is not None else args.project
     DATASET = config['dataset'] if config['dataset'] is not None else args.dataset
 
     #setup wandb
-    run = wandb.init(project=PROJECT, config=config)
+    run = wandb.init(project=PROJECT)
+    if run.config is None:
+        run.config.update(config)
     config = wandb.config
     print("HERE config!", config)
 

@@ -34,14 +34,22 @@ parameters:
     max: 0.0002
 
   ## augmentation
-  resize: 224
-  horizontal_flip: 0.5
-  vertical_flip: 0.5
-  random_rotation: 90
-  brightness: 0.2
-  contrast: 0.2
-  saturation: 0.2
-  hue: 0.2
+  resize:
+    values: [224]
+  horizontal_flip:
+    values: [0.5]
+  vertical_flip:
+    values: [0.5]
+  random_rotation:
+    values: [90]
+  brightness:
+    values: [0.2]
+  contrast:
+    values: [0.2]
+  saturation:
+    values: [0.2]
+  hue:
+    values: [0.2]
 
 command:
   - ${env}
