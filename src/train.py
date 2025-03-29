@@ -97,6 +97,7 @@ def trainer(config=None):
         run = wandb.init(project=PROJECT)
     else: 
         run = wandb.init(project=PROJECT, config=config)
+        run.config.update(config)
 
     print("here config!!!", config)
     config = run.config
@@ -135,7 +136,14 @@ def trainer(config=None):
     print(f"Early stopping: {config['es_patience']}")
     print(f"Dataset: {len(train_loader.dataset)} training samples, {len(val_loader.dataset)} validation samples")
 
+    # Save model
+    model_dir = "../models"
+    os.makedirs(model_dir, exist_ok=True)
+    model_path = os.path.join(model_dir, f"best-{config['model']}-{timestamp}.pt")
+    print(f"Model will be saved at {model_path}")
+
     # train
+    best_val_loss = float('inf')
     for epoch in range(EPOCHS):
         train_loss, train_acc = train_one_epoch(model, train_loader, optimizer, criterion)
 
@@ -145,6 +153,10 @@ def trainer(config=None):
             scheduler.step(val_loss)
 
         # early stopping
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            print(f"Saving model at epoch {epoch+1} with val loss {val_loss:.4f}")
+            torch.save(model.state_dict(), model_path)
         print(f"[Epoch {epoch+1}/{EPOCHS}] Train Loss: {train_loss:.4f} Val Loss: {val_loss:.4f} Train Acc: {train_acc:.4f} Val Acc: {val_acc:.4f}")
         run.log({"train_loss": train_loss, "val_loss": val_loss, "train_acc": train_acc, "val_acc": val_acc})
         if early_stopping(val_loss):
@@ -152,9 +164,15 @@ def trainer(config=None):
             break
 
     # final verdict: test
-    start_time = time.time()
     print("Testing model...")
     test_loader = get_data_loader(artifact_data_dir, config, mode="test")
+    
+    model = get_model(config['model'], num_classes=len(test_loader.dataset.classes))
+    model.load_state_dict(torch.load(model_path, weights_only=True))
+    model.eval()
+    model.to(device)
+    
+    start_time = time.time()
     preds, labels = test(model, test_loader)
     end_time = time.time()
 
@@ -173,11 +191,8 @@ def trainer(config=None):
         "test_accuracy", 
         title="Inference Time vs Test Accuracy"
     )})
-   
-    # Save model
-    model_dir = "../models"
-    os.makedirs(model_dir, exist_ok=True)
-    model_path = os.path.join(model_dir, f"{config['model']}-{timestamp}.pt")
+    run.log({"test_accuracy": accuracy})
+
     torch.save(model.state_dict(), model_path)
     print(f"Model saved at {model_path}")
 

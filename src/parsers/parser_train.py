@@ -9,8 +9,7 @@ def create_parser():
     return parser
 
 def parse_args():
-
-    sys.argv = [sys.argv[0]]
+    # sys.argv = [sys.argv[0]]
     parser = create_parser()
     args, unknown = parser.parse_known_args()
     return args

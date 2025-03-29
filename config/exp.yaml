@@ -21,7 +21,7 @@ es_patience: 10
 # hyperparameters
 num_classes: 4
 lr: 1e-5
-num_epochs: 30
+num_epochs: 1
 batch_size: 4
 optimizer: "adam"
 weight_decay: 0.0001
