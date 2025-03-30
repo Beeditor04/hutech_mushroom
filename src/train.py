@@ -70,8 +70,8 @@ def test(model, loader):
     all_labels = []
     with torch.no_grad():
         for inputs, labels in loader:
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            inputs = inputs.to("cpu")
+            labels = labels.to("cpu")
 
             outputs = model(inputs)
             _, preds = torch.max(outputs, 1)

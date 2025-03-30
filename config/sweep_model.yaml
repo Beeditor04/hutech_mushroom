@@ -25,6 +25,10 @@ parameters:
     values: [0.2]
   saturation:
     values: [0.2]
+  mean:
+    value: [0.485, 0.456, 0.406]
+  std:
+    value: [0.229, 0.224, 0.225]
   # hyperparameters (fixed)
   num_classes:
     value: 4
