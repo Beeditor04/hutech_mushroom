@@ -32,13 +32,13 @@ def get_model(name, num_classes, freeze=False):
     elif name == "efficientnet":
         model = EfficientNet(num_classes=num_classes)
     elif name == "convnext":
-        model = ConvNeXt(num_classes=num_classes, freeze=freeze)
+        model = ConvNeXt(num_classes=num_classes)
     elif name == "densenet":
         model = DenseNet(num_classes=num_classes)
     elif name == "mobilenet":
         model = MobileNetV3(num_classes=num_classes)
     elif name == "resnet":
-        model = ResNet18(num_classes=num_classes, freeze=freeze)
+        model = ResNet18(num_classes=num_classes)
     elif name == "vit":
         model = TinyViT(num_classes=num_classes)
     elif name == "inception":
