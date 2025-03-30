@@ -1,48 +1,62 @@
 program: train.py
 name: aug_sweep
-method: grid
+method: random
 metric:
   name: test_accuracy
   goal: maximize
 parameters:
   model:
-    value: "alexnet"
+    value: "vit"
   dataset:
     value: "hutech-dataset:latest"
   # augmentation (sweep)
   resize:
     values: [224]
+  random_crop:
+    values: [224]
   horizontal_flip:
-    values: [0, 224]
+    values: [0.5]
   vertical_flip:
-    values: [0, 0.5]
+    values: [0.5]
   random_rotation:
-    values: [0, 90]
+    values: [90]
   brightness:
-    values: [0, 0.2]
+    values: [0.2, 0.5]
   contrast:
-    values: [0, 0.2]
+    values: [0.2, 0.5]
   saturation:
-    values: [0, 0.2]
+    values: [0.2, 0.5]
   hue:
+    values: [0.2, 0.5]
+  random_affine:
     values: [0, 0.2]
+  random_perspective:
+    values: [0, 0.2]
+  gray:
+    values: [0, 0.2]
+  blur:
+    values: [0, 1]
+  auto_aug:
+    values: [0, 1]
+  random_erasing:
+    values: [0.2]
   # hyperparameters (fixed)
   num_classes:
     value: 4
   lr:
     value: 1e-5
   num_epochs:
-    value: 30
+    value: 150
   batch_size:
     value: 4
   optimizer:
     value: "adam"
   scheduler: 
-    value: "reduce_lr_on_plateau"
+    value: "cosine"
   es_patience: 
     value: 10
   weight_decay:
-    value: 0.0001
+    value: 0.00025
   momentum:
     value: 0.9
     

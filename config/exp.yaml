@@ -16,6 +16,9 @@ saturation: 0.2
 hue: 0.2
 # random_affine: 0.2
 # gray: 0.2
+# random_perspective: 0.2
+# blur: 1
+# auto_aug: 1
 
 normalize: 1
 mean: [0.485, 0.456, 0.406]

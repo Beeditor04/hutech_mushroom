@@ -116,8 +116,7 @@ def trainer(config=None):
     # build model
     model = get_model(
         config['model'], 
-        num_classes=len(train_loader.dataset.classes),
-        freeze=config['freeze'])
+        num_classes=len(train_loader.dataset.classes))
     model.to(device)
 
     # build optimizer

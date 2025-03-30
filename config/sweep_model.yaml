@@ -39,7 +39,7 @@ parameters:
   lr:
     value: 1e-5
   num_epochs:
-    value: 30
+    value: 150
   batch_size:
     value: 4
   optimizer:
