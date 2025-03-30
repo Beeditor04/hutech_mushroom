@@ -23,14 +23,18 @@ def get_data_loader(dir, config, mode):
             saturation=config.get('saturation', 0),
             hue=config.get('hue', 0)
         ))
+    if config.get("random_perspective", 0):
+        transform_list.append(transforms.RandomPerspective(distortion_scale=config['random_perspective'], p=0.5))
     if config.get("random_affine", 0):
         transform_list.append(transforms.RandomAffine(degrees=config['random_affine']))
     if config.get("gray", 0):
         transform_list.append(transforms.RandomGrayscale(p=config['gray']))
     if config.get("blur", 0):
         transform_list.append(transforms.GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 2)))
-    
+    if config.get("auto_aug", 0):
+        transform_list.append(transforms.AutoAugment())
     transform_list.append(transforms.ToTensor())
+
     if config.get("normalize", 0):
         transform_list.append(transforms.Normalize(mean=config['mean'], std=config['std']))
     if config.get("random_erasing", 0):
