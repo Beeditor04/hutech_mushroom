@@ -23,7 +23,7 @@ from models.shufflenet import ShuffleNetV2
 # List of supported model names:
 # ["alexnet", "convnext", "densenet", "efficientnet", "mobilenet", "resnet", "vit", "inception", "negnet", "resnext", "shufflenet"]
 
-def get_model(name, num_classes):
+def get_model(name, num_classes, freeze=False):
     name = name.lower()
     if name == "mini_alexnet":
         model = MiniAlexNet(num_classes=num_classes)
@@ -32,13 +32,13 @@ def get_model(name, num_classes):
     elif name == "efficientnet":
         model = EfficientNet_b0(num_classes=num_classes)
     elif name == "convnext":
-        model = ConvNeXt(num_classes=num_classes)
+        model = ConvNeXt(num_classes=num_classes, freeze=freeze)
     elif name == "densenet":
         model = DenseNet(num_classes=num_classes)
     elif name == "mobilenet":
         model = MobileNetV3(num_classes=num_classes)
     elif name == "resnet":
-        model = ResNet18(num_classes=num_classes)
+        model = ResNet18(num_classes=num_classes, freeze=freeze)
     elif name == "vit":
         model = TinyViT(num_classes=num_classes)
     elif name == "inception":
@@ -75,8 +75,13 @@ def get_scheduler(optimizer, config):
         scheduler = optim.lr_scheduler.StepLR(optimizer)
     elif SCHEDULER == "reduce_lr_on_plateau":
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min')
+    elif SCHEDULER == "cosine":
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
+    elif SCHEDULER == "cosine_warmup":
+        scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10)
     else:
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min')
+        raise ValueError(f"Invalid scheduler name: {SCHEDULER}")
+        return False
     return scheduler
 
 class EarlyStopping():

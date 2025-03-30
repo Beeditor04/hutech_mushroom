@@ -114,7 +114,10 @@ def trainer(config=None):
     val_loader = get_data_loader(artifact_data_dir, config, mode="val")
 
     # build model
-    model = get_model(config['model'], num_classes=len(train_loader.dataset.classes))
+    model = get_model(
+        config['model'], 
+        num_classes=len(train_loader.dataset.classes),
+        freeze=config['freeze'])
     model.to(device)
 
     # build optimizer
@@ -171,7 +174,7 @@ def trainer(config=None):
     model = get_model(config['model'], num_classes=len(test_loader.dataset.classes))
     model.load_state_dict(torch.load(model_path, weights_only=True))
     model.eval()
-    model.to(device)
+    model.to("cpu")
     
     start_time = time.time()
     preds, labels = test(model, test_loader)
@@ -201,7 +204,7 @@ def trainer(config=None):
     artifact_model = wandb.Artifact(f"{config['model']}-model", type="model")
     artifact_model.add_file(model_path)
     run.log_artifact(artifact_model)
-
+    
     run.finish()
 
 if __name__ == "__main__":

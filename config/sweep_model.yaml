@@ -8,6 +8,8 @@ parameters:
   # model (sweep)
   model:
     values: ["alexnet", "convnext", "densenet", "efficientnet", "mobilenet", "resnet", "vit", "inception", "negnet", "resnext", "shufflenet"]
+  freeze:
+    values: [true, false]
   dataset:
     value: "hutech-dataset:latest"
   # augmentation 
@@ -35,7 +37,7 @@ parameters:
   optimizer:
     value: "adam"
   scheduler: 
-    value: "reduce_lr_on_plateau"
+    value: "cosine"
   es_patience: 
     value: 10
   weight_decay:
