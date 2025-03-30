@@ -44,11 +44,13 @@ def get_data_loader(dir, config, mode):
     # convert from list to transforms
     base_transform = transforms.Compose(transform_list)
     if mode in ("test", "val"):
-        base_transform = transforms.Compose([
+        base_transform = [
             transforms.Resize(config['resize']),
             transforms.ToTensor(),
-            transforms.Normalize(mean=config['mean'], std=config['std'])
-        ])
+        ]
+        if config.get("normalize", 0):
+            base_transform.append(transforms.Normalize(mean=config['mean'], std=config['std']))
+        base_transform = transforms.Compose(base_transform)
     # dataset
     df_path = os.path.join(dir, mode)
     dataset = datasets.ImageFolder(df_path, transform=base_transform)  

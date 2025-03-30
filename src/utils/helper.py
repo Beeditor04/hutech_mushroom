@@ -9,16 +9,16 @@ def load_config(path):
 
 from models.mini_alexnet import MiniAlexNet
 from models.alexnet import AlexNet
-from models.efficientnet import EfficientNet_b0
+from models.efficientnet import EfficientNet
 from models.convnext import ConvNeXt
 from models.densenet import DenseNet
 from models.mobilenet import MobileNetV3
 from models.resnet import ResNet18
 from models.vit import TinyViT
 from models.inception import InceptionV4
-from models.negnet import NegNetY800MF
+from models.regnet import RegNetY800MF
 from models.resnext import ResNeXt50
-from models.shufflenet import ShuffleNetV2
+# from models.shufflenet import ShuffleNetV2
 
 # List of supported model names:
 # ["alexnet", "convnext", "densenet", "efficientnet", "mobilenet", "resnet", "vit", "inception", "negnet", "resnext", "shufflenet"]
@@ -30,7 +30,7 @@ def get_model(name, num_classes, freeze=False):
     elif name == "alexnet":
         model = AlexNet(num_classes=num_classes)
     elif name == "efficientnet":
-        model = EfficientNet_b0(num_classes=num_classes)
+        model = EfficientNet(num_classes=num_classes)
     elif name == "convnext":
         model = ConvNeXt(num_classes=num_classes, freeze=freeze)
     elif name == "densenet":
@@ -43,12 +43,10 @@ def get_model(name, num_classes, freeze=False):
         model = TinyViT(num_classes=num_classes)
     elif name == "inception":
         model = InceptionV4(num_classes=num_classes)
-    elif name == "negnet":
-        model = NegNetY800MF(num_classes=num_classes)
+    elif name == "regnet":
+        model = RegNetY800MF(num_classes=num_classes)
     elif name == "resnext":
         model = ResNeXt50(num_classes=num_classes)
-    elif name == "shufflenet":
-        model = ShuffleNetV2(num_classes=num_classes)
     else:
         raise ValueError(f"Model {name} not supported.")
     return model

@@ -1,8 +1,8 @@
 project: "hutech_mushroom"
 dataset: "hutech-dataset:latest"
-model: "resnet"
+model: "regnet"
 # technique
-freeze: True
+freeze: False
 
 # augmentation
 resize: 224
@@ -16,6 +16,8 @@ saturation: 0.2
 hue: 0.2
 # random_affine: 0.2
 # gray: 0.2
+
+normalize: 1
 mean: [0.485, 0.456, 0.406]
 std: [0.229, 0.224, 0.225]
 random_erasing: 0.2
