@@ -23,30 +23,30 @@ from models.resnext import ResNeXt50
 # List of supported model names:
 # ["alexnet", "convnext", "densenet", "efficientnet", "mobilenet", "resnet", "vit", "inception", "negnet", "resnext", "shufflenet"]
 
-def get_model(name, num_classes, freeze=False):
+def get_model(name, num_classes, freeze=False, include_top=True):
     name = name.lower()
     if name == "mini_alexnet":
-        model = MiniAlexNet(num_classes=num_classes)
+        model = MiniAlexNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "alexnet":
-        model = AlexNet(num_classes=num_classes)
+        model = AlexNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "efficientnet":
-        model = EfficientNet(num_classes=num_classes)
+        model = EfficientNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "convnext":
-        model = ConvNeXt(num_classes=num_classes)
+        model = ConvNeXt(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "densenet":
-        model = DenseNet(num_classes=num_classes)
+        model = DenseNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "mobilenet":
-        model = MobileNetV3(num_classes=num_classes)
+        model = MobileNetV3(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "resnet":
-        model = ResNet18(num_classes=num_classes)
+        model = ResNet18(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "vit":
-        model = TinyViT(num_classes=num_classes)
+        model = TinyViT(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "inception":
-        model = InceptionV4(num_classes=num_classes)
+        model = InceptionV4(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "regnet":
-        model = RegNetY800MF(num_classes=num_classes)
+        model = RegNetY800MF(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "resnext":
-        model = ResNeXt50(num_classes=num_classes)
+        model = ResNeXt50(num_classes=num_classes, freeze=freeze, include_top=include_top)
     else:
         raise ValueError(f"Model {name} not supported.")
     return model

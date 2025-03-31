@@ -10,6 +10,8 @@ parameters:
     values: ["alexnet", "convnext", "densenet", "efficientnet", "mobilenet", "resnet", "vit", "regnet"]
   dataset:
     value: "hutech-dataset:latest"
+  freeze:
+    values: [True]
   # augmentation (fixed)
   resize:
     values: [224]
