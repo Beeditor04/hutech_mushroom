@@ -16,7 +16,7 @@ import wandb
 ## helper
 from loader.loader import get_data_loader
 from utils.metrics import compute_metrics
-from utils.helper import load_config, get_model, get_optimizer, get_scheduler, EarlyStopping
+from utils.helper import load_config, get_model, get_optimizer, get_scheduler, EarlyStopping, plot_one_batch
 from parsers.parser_train import parse_args
 
 # device
@@ -112,7 +112,8 @@ def trainer(config=None):
     # build dataset
     train_loader = get_data_loader(artifact_data_dir, config, mode="train")
     val_loader = get_data_loader(artifact_data_dir, config, mode="val")
-
+    class_names = ["nấm mỡ", "nấm bào ngư", "nấm đùi gà", "nấm linh chi trắng"] 
+    plot_one_batch(train_loader, config['batch_size'], class_names)
     # build model
     model = get_model(
         config['model'], 

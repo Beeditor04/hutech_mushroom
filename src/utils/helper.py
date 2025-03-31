@@ -6,7 +6,7 @@ def load_config(path):
     with open(path, 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
     return config
-
+import matplotlib.pyplot as plt
 from models.mini_alexnet import MiniAlexNet
 from models.alexnet import AlexNet
 from models.efficientnet import EfficientNet
@@ -86,6 +86,28 @@ def get_scheduler(optimizer, config):
         raise ValueError(f"Invalid scheduler name: {SCHEDULER}")
         return False
     return scheduler
+
+def plot_one_batch(loader, batch_size=4, class_names=None):
+    images, labels = next(iter(loader))
+    print(f"Batch size: {batch_size}")   
+
+    rows = (batch_size + 3) // 4  
+    fig, axes = plt.subplots(rows, 4, figsize=(10, 5))
+    axes = axes.flatten()  
+    
+    for i in range(batch_size):
+        img = images[i].permute(1, 2, 0)  # convert back to image
+        label = labels[i]
+
+        axes[i].imshow(img)
+        axes[i].set_title(class_names[label], fontsize=10, pad=10)  
+        axes[i].axis("off")
+
+    for j in range(batch_size, len(axes)):
+        fig.delaxes(axes[j])
+
+    plt.tight_layout()  # Điều chỉnh layout để tránh chồng chữ lên ảnh
+    plt.savefig("sample_batch.png", dpi=300, bbox_inches='tight')
 
 class EarlyStopping():
     def __init__(self, patience=10):

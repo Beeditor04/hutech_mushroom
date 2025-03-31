@@ -9,6 +9,8 @@ resize: 224
 random_crop: 224
 horizontal_flip: 0.5
 vertical_flip: 0.5
+zoom_out: 1
+zoom_range: [0.8, 1.2]
 random_rotation: 180
 brightness: 0.5
 contrast: 1.0
