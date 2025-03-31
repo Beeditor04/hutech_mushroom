@@ -9,13 +9,13 @@ resize: 224
 random_crop: 224
 horizontal_flip: 0.5
 vertical_flip: 0.5
-random_rotation: 90
+random_rotation: 180
 brightness: 0.5
-contrast: 0.5
-saturation: 0.5
-hue: 0.5
-random_affine: 0.5
-random_perspective: 0.5
+contrast: 1.0
+# saturation: 0.5
+# hue: 0.5
+random_affine: 0.2
+random_perspective: 0.2
 auto_aug: 1
 
 normalize: 1

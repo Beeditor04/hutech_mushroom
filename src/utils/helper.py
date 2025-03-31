@@ -18,7 +18,8 @@ from models.vit import TinyViT
 from models.inception import InceptionV4
 from models.regnet import RegNetY800MF
 from models.resnext import ResNeXt50
-# from models.shufflenet import ShuffleNetV2
+from models.vggnet import VGGNet
+from models.shufflenet import ShuffleNetV2
 
 # List of supported model names:
 # ["alexnet", "convnext", "densenet", "efficientnet", "mobilenet", "resnet", "vit", "inception", "negnet", "resnext", "shufflenet"]
@@ -47,6 +48,10 @@ def get_model(name, num_classes, freeze=False, include_top=True):
         model = RegNetY800MF(num_classes=num_classes, freeze=freeze, include_top=include_top)
     elif name == "resnext":
         model = ResNeXt50(num_classes=num_classes, freeze=freeze, include_top=include_top)
+    elif name == "shufflenet":
+        model = ShuffleNetV2(num_classes=num_classes, freeze=freeze, include_top=include_top)
+    elif name == "vggnet":
+        model = VGGNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
     else:
         raise ValueError(f"Model {name} not supported.")
     return model

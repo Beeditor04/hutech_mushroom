@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class MiniAlexNet(nn.Module):
-    def __init__(self, num_classes=2):
+    def __init__(self, num_classes=2, freeze=False, include_top=True):
         super(MiniAlexNet, self).__init__()
         
         # Convolutional Layer 1
