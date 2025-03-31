@@ -75,7 +75,7 @@ def get_optimizer(model, config):
 def get_scheduler(optimizer, config):
     SCHEDULER = config['scheduler']
     if SCHEDULER == "step":
-        scheduler = optim.lr_scheduler.StepLR(optimizer)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10)
     elif SCHEDULER == "reduce_lr_on_plateau":
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min')
     elif SCHEDULER == "cosine":

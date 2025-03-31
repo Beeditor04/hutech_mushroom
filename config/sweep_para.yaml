@@ -2,17 +2,17 @@ program: train.py
 method: bayes
 name: para_sweep
 metric:
-  name: test_accuracy
-  goal: maximize
+  name: val_loss
+  goal: minimize
 parameters:
   model: 
-    value: "alexnet"
+    value: "vit"
   dataset: 
     value: "hutech-dataset:latest"
   scheduler: 
-    value: "reduce_lr_on_plateau"
+    values: ["reduce_lr_on_plateau", "cosine", "step", "cosine_warmup"]
   es_patience: 
-    value: 10
+    value: [10]
 
   ## optimizing
   lr:
@@ -23,8 +23,8 @@ parameters:
       - "1e-5"
   momentum:
     distribution: uniform
-    min: 0.45
-    max: 1.8
+    min: 0.5
+    max: 1.5
   optimizer:
     distribution: categorical
     values:
@@ -32,16 +32,18 @@ parameters:
       - sgd
       - adamw
   batch_size: 
-    values: [2, 4, 8, 16, 32, 64]
+    values: [4, 8, 16, 32, 64]
   num_epochs: 
-    values: [30, 50, 70, 100]
+    values: [150]
   weight_decay:
     distribution: uniform
     min: 0.00005
-    max: 0.0002
+    max: 0.0003
 
   ## augmentation
   resize:
+    values: [224]
+  random_crop:
     values: [224]
   horizontal_flip:
     values: [0.5]
@@ -49,10 +51,20 @@ parameters:
     values: [0.5]
   random_rotation:
     values: [90]
+  brightness:
+    values: [0.5]
   contrast:
+    values: [1.0]
+  hue:
+    values: [0.5]
+  random_affine: 
     values: [0.2]
-  saturation:
+  random_perspective:
     values: [0.2]
+  auto_aug:
+    values: [1] 
+  random_erasing:
+    values: [0.3]
 
 command:
   - ${env}

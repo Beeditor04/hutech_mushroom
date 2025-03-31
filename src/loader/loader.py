@@ -55,7 +55,7 @@ def get_data_loader(dir, config, mode):
         if config.get("random_erasing", 0):
             transform_list.append(transforms.RandomErasing(
                 p=config['random_erasing'],
-                scale=(0.02, 0.33),
+                scale=(0.02, 0.2),
                 ratio=(0.3, 3.3),
                 value='random'
             ))
