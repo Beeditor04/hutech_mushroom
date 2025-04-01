@@ -1,6 +1,6 @@
 project: "hutech_mushroom"
 dataset: "hutech-dataset:latest"
-model: "vit"
+model: "mobilenet"
 # technique
 pretrained: false
 freeze: false
