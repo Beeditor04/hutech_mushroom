@@ -119,7 +119,6 @@ def trainer(config=None):
         name=config['model'], 
         num_classes=len(train_loader.dataset.classes),
         freeze=config['freeze'],
-        include_top=config['include_top'],
         pretrained=config['pretrained']
         )
     model.to(device)
