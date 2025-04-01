@@ -116,8 +116,12 @@ def trainer(config=None):
     plot_one_batch(train_loader, config['batch_size'], class_names)
     # build model
     model = get_model(
-        config['model'], 
-        num_classes=len(train_loader.dataset.classes))
+        name=config['model'], 
+        num_classes=len(train_loader.dataset.classes),
+        freeze=config['freeze'],
+        include_top=config['include_top'],
+        pretrained=config['pretrained']
+        )
     model.to(device)
 
     # build optimizer
