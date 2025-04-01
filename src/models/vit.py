@@ -7,9 +7,9 @@ class TinyViT(nn.Module):
         super(TinyViT, self).__init__()
         self.model = timm.create_model("vit_tiny_patch16_224", pretrained=pretrained)
         in_features = self.model.head.in_features
-        self.model.head = nn.Linear(in_features, num_classes)
+        self.model.reset_classifier(num_classes=num_classes)
         if not include_top:
-            self.model.head = nn.Identity()
+            self.model.reset_classifier(num_classes=0)
         if freeze:
             for param in self.model.parameters():
                 param.requires_grad = False

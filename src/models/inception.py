@@ -9,7 +9,7 @@ class InceptionV4(nn.Module):
         # timm provides a helper to reset the classifier
         self.model.reset_classifier(num_classes=num_classes)
         if not include_top:
-            self.model.head = nn.Identity()
+            self.model.reset_classifier(num_classes=0)
         if freeze and pretrained:
             for param in self.model.parameters():
                 param.requires_grad = False

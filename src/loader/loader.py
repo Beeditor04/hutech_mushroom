@@ -18,6 +18,7 @@ def get_data_loader(dir, config, mode):
     if mode in ("test", "val"):
         transform_list = [
             # transforms.RandomApply([SharpenTransform()], p=1),
+            transforms.RandomApply([EdgeEnhance()], p=1),
             transforms.Resize(config['resize']),
             transforms.ToTensor(),
         ]

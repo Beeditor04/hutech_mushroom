@@ -1,8 +1,8 @@
 project: "hutech_mushroom"
 dataset: "hutech-dataset:latest"
-model: "mobilenet"
+model: "resnet"
 # technique
-pretrained: false
+pretrained: true
 freeze: false
 
 # augmentation

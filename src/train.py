@@ -177,7 +177,12 @@ def trainer(config=None):
     print("Testing model...")
     test_loader = get_data_loader(artifact_data_dir, config, mode="test")
     
-    model = get_model(config['model'], num_classes=len(test_loader.dataset.classes))
+    model = get_model(
+        config['model'], 
+        num_classes=len(test_loader.dataset.classes),
+        freeze=config['freeze'],
+        pretrained=config['pretrained']
+        )
     model.load_state_dict(torch.load(model_path, weights_only=True))
     model.eval()
     model.to("cpu")

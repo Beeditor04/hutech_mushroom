@@ -10,7 +10,7 @@ class GhostNet(nn.Module):
         else:
             self.model = timm.create_model("ghostnetv2_100", pretrained=False)
         in_features = self.model.head.in_features
-        self.model.head = nn.Linear(in_features, num_classes)
+        self.model.reset_classifier(num_classes=num_classes)
         if not include_top:
             self.model.head = nn.Identity()
         if freeze and pretrained:
