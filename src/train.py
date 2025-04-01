@@ -127,8 +127,8 @@ def trainer(config=None):
     early_stopping = EarlyStopping(patience=config['es_patience'])
     # setup log
     EPOCHS = config['num_epochs']
-    TOTAL_PARAMS = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    TOTAL_TRAINABLE_PARAMS = sum(p.numel() for p in model.parameters() if p.requires_grad and p.dim() > 1)
+    TOTAL_PARAMS = sum(p.numel() for p in model.parameters())
+    TOTAL_TRAINABLE_PARAMS = sum(p.numel() for p in model.parameters() if p.requires_grad)
     
     timestamp = time.strftime("%Y-%m-%d-%H:%M:%S")
     print("Training model...")

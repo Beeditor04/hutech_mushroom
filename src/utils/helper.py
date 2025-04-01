@@ -24,34 +24,34 @@ from models.shufflenet import ShuffleNetV2
 # List of supported model names:
 # ["alexnet", "convnext", "densenet", "efficientnet", "mobilenet", "resnet", "vit", "inception", "negnet", "resnext", "shufflenet"]
 
-def get_model(name, num_classes, freeze=False, include_top=True):
+def get_model(name, num_classes, freeze=False, include_top=True, pretrained=True):
     name = name.lower()
     if name == "mini_alexnet":
-        model = MiniAlexNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = MiniAlexNet(num_classes=num_classes, include_top=include_top)
     elif name == "alexnet":
-        model = AlexNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = AlexNet(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "efficientnet":
-        model = EfficientNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = EfficientNet(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "convnext":
-        model = ConvNeXt(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = ConvNeXt(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "densenet":
-        model = DenseNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = DenseNet(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "mobilenet":
-        model = MobileNetV3(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = MobileNetV3(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "resnet":
-        model = ResNet18(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = ResNet18(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "vit":
-        model = TinyViT(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = TinyViT(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "inception":
-        model = InceptionV4(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = InceptionV4(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "regnet":
-        model = RegNetY800MF(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = RegNetY800MF(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "resnext":
-        model = ResNeXt50(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = ResNeXt50(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "shufflenet":
-        model = ShuffleNetV2(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = ShuffleNetV2(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "vggnet":
-        model = VGGNet(num_classes=num_classes, freeze=freeze, include_top=include_top)
+        model = VGGNet(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     else:
         raise ValueError(f"Model {name} not supported.")
     return model
