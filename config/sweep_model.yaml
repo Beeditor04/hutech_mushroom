@@ -7,13 +7,13 @@ metric:
 parameters:
   # model (sweep)
   model:
-    values: ["alexnet", "convnext", "efficientnet", "mobilenet", "resnet", "vit", "regnet", "shufflenet"]
+    values: ["convnext", "efficientnet", "mobilenet", "resnet", "vit", "regnet", "shufflenet"]
   dataset:
     value: "hutech-dataset:latest"
   freeze:
-    values: [True]
+    values: [False]
   pretrained:
-    values: [True, False]
+    values: [True]
   # augmentation (fixed)
   resize:
     values: [224]
@@ -38,11 +38,11 @@ parameters:
   auto_aug:
     values: [1] 
   normalize: 
-    value: 0
-  # mean:
-  #   value: [0.485, 0.456, 0.406]
-  # std:
-  #   value: [0.229, 0.224, 0.225]
+    values: [0, 1]
+  mean:
+    value: [0.485, 0.456, 0.406]
+  std:
+    value: [0.229, 0.224, 0.225]
   # hyperparameters (fixed)
   num_classes:
     value: 4

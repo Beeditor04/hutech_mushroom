@@ -2,8 +2,8 @@ program: train.py
 name: aug_sweep
 method: random
 metric:
-  name: test_accuracy
-  goal: maximize
+  name: val_loss
+  goal: minimize
 parameters:
   model:
     value: "vit"
@@ -19,7 +19,7 @@ parameters:
   vertical_flip:
     values: [0.5]
   random_rotation:
-    values: [90]
+    values: [90, 180]
   brightness:
     values: [0.2, 0.5]
   contrast:
@@ -39,7 +39,9 @@ parameters:
   auto_aug:
     values: [0, 1]
   random_erasing:
-    values: [0.2]
+    values: [0.2, 0.5]
+  normalize: 
+    values: [0, 1]  
   # hyperparameters (fixed)
   num_classes:
     value: 4
@@ -50,7 +52,7 @@ parameters:
   batch_size:
     value: 4
   optimizer:
-    value: "adam"
+    value: "adamw"
   scheduler: 
     value: "cosine"
   es_patience: 

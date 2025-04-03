@@ -6,9 +6,9 @@ class MobileNetV3(nn.Module):
     def __init__(self, num_classes=4, freeze=False, pretrained=True, include_top=True):
         super(MobileNetV3, self).__init__()
         if pretrained:
-            self.model = models.mobilenet_v3_small(weights=models.MobileNet_V3_Small_Weights.IMAGENET1K_V1)
+            self.model = models.mobilenet_v3_large(weights=models.MobileNet_V3_Large_Weights.IMAGENET1K_V1)
         else:
-            self.model = models.mobilenet_v3_small(weights=None)
+            self.model = models.mobilenet_v3_large(weights=None)
         in_features = self.model.classifier[3].in_features
         self.model.classifier[3] = nn.Linear(in_features, num_classes)
         if not include_top:
