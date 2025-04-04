@@ -18,6 +18,7 @@ from loader.loader import get_data_loader
 from utils.metrics import compute_metrics
 from utils.helper import load_config, get_model, get_optimizer, get_scheduler, EarlyStopping, plot_one_batch
 from parsers.parser_train import parse_args
+from utils.setup import set_seed
 
 # device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -82,6 +83,10 @@ def test(model, loader):
 
 
 def trainer(config=None):
+    # fixed seeds
+    set_seed()
+
+    # load config   
     args = parse_args()
     print("args", args)
     if args.config is not None:  # no sweep config, load from file
@@ -126,7 +131,7 @@ def trainer(config=None):
     # build optimizer
     optimizer = get_optimizer(model, config)
     criterion = nn.CrossEntropyLoss()
-    scheduler = get_scheduler(optimizer, config)
+    scheduler = get_scheduler(optimizer, config, len(train_loader)*config['num_epochs'])
     early_stopping = EarlyStopping(patience=config['es_patience'])
     # setup log
     EPOCHS = config['num_epochs']
@@ -160,7 +165,7 @@ def trainer(config=None):
     # eval
         val_loss, val_acc = validate(model, val_loader, criterion)
         if scheduler is not None:
-            scheduler.step(val_loss)
+            scheduler.step()
 
         # early stopping
         if val_loss < best_val_loss:

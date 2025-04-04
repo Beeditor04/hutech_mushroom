@@ -72,20 +72,35 @@ def get_optimizer(model, config):
         raise ValueError(f"Invalid optimizer name: {OPTIMIZER}")
     return optimizer
 
-def get_scheduler(optimizer, config):
+def get_scheduler(optimizer, config, num_train_steps):
     SCHEDULER = config['scheduler']
+    warmup_ratio = config.get('scheduler_warmup', 0.1)
+    warmup_steps = int(num_train_steps * warmup_ratio)
+
+    def lr_lambda(current_step):
+        if current_step < warmup_steps:
+            return float(current_step) / float(max(1, warmup_steps))
+        return 1.0
+
+    warmup_scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_lambda)
+
     if SCHEDULER == "step":
-        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10)
-    elif SCHEDULER == "reduce_lr_on_plateau":
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min')
+        step_size = config.get('scheduler_step', 30)
+        gamma = config.get('scheduler_gamma', 0.1)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
     elif SCHEDULER == "cosine":
-        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
-    elif SCHEDULER == "cosine_warmup":
-        scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10)
+        T_max = num_train_steps - warmup_steps
+        eta_min = config.get('scheduler_eta_min', 0)
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=T_max, eta_min=eta_min)
     else:
         raise ValueError(f"Invalid scheduler name: {SCHEDULER}")
         return False
-    return scheduler
+    
+    return optim.lr_scheduler.SequentialLR(
+        optimizer, 
+        schedulers=[warmup_scheduler, scheduler], 
+        milestones=[warmup_steps]
+        )
 
 def plot_one_batch(loader, batch_size=4, class_names=None):
     images, labels = next(iter(loader))

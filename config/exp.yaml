@@ -25,14 +25,20 @@ normalize: 0
 # random_erasing: 0.5
 
 # optimizier: schedule + earlystopping
-scheduler: "step"
-es_patience: 10
+scheduler: "cosine"
+## StepLR
+scheduler_step: 30
+scheduler_gamma: 0.5
+scheduler_warmup: 0.1
+## AnealLR
+scheduler_eta_min: 1e-6
+es_patience: 20
 
 # hyperparameters
 num_classes: 4
 lr: 1e-5
 num_epochs: 150
-batch_size: 4
+batch_size: 8
 optimizer: "adamw"
 weight_decay: 0.00025
 momentum: 0.9
