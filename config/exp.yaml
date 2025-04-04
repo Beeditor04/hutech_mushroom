@@ -22,21 +22,23 @@ auto_aug: 1
 normalize: 0
 # mean: [0.485, 0.456, 0.406]
 # std: [0.229, 0.224, 0.225]
-# random_erasing: 0.5
+random_erasing: 0.1
 
 # optimizier: schedule + earlystopping
 scheduler: "step"
+is_warmup: true
+lr: 0.01
+
 ## StepLR
-scheduler_step: 20
-scheduler_gamma: 0.5
-scheduler_warmup: 0.1
-## AnealLR
-scheduler_eta_min: 1e-6
+scheduler_step: 30
+scheduler_gamma: 0.1
+scheduler_warmup: 0.05
+## Cosine (default)
+## EarlyStopping
 es_patience: 20
 
 # hyperparameters
 num_classes: 4
-lr: 1e-5
 num_epochs: 150
 batch_size: 8
 optimizer: "adamw"

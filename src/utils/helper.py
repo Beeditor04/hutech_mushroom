@@ -74,33 +74,33 @@ def get_optimizer(model, config):
 
 def get_scheduler(optimizer, config, num_train_steps):
     SCHEDULER = config['scheduler']
-    warmup_ratio = config.get('scheduler_warmup', 0.1)
+    warmup_ratio = config.get('scheduler_warmup', 0.05)
     warmup_steps = int(num_train_steps * warmup_ratio)
-
-    def lr_lambda(current_step):
-        if current_step < warmup_steps:
-            return float(current_step) / float(max(1, warmup_steps))
-        return 1.0
-
-    warmup_scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_lambda)
+    is_warmup = config.get('is_warmup', True)
 
     if SCHEDULER == "step":
         step_size = config.get('scheduler_step', 30)
         gamma = config.get('scheduler_gamma', 0.1)
         scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
     elif SCHEDULER == "cosine":
-        T_max = num_train_steps - warmup_steps
-        eta_min = config.get('scheduler_eta_min', 0)
-        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=T_max, eta_min=eta_min)
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer)
     else:
         raise ValueError(f"Invalid scheduler name: {SCHEDULER}")
-        return False
-    
-    return optim.lr_scheduler.SequentialLR(
-        optimizer, 
-        schedulers=[warmup_scheduler, scheduler], 
-        milestones=[warmup_steps]
+
+    if is_warmup:
+        def lr_lambda(current_step):
+            if current_step < warmup_steps:
+                return float(current_step) / float(max(1, warmup_steps))
+            return 1.0
+
+        warmup_scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_lambda)
+        return optim.lr_scheduler.SequentialLR(
+            optimizer, 
+            schedulers=[warmup_scheduler, scheduler], 
+            milestones=[warmup_steps]
         )
+    else:
+        return scheduler
 
 def plot_one_batch(loader, batch_size=4, class_names=None):
     images, labels = next(iter(loader))
