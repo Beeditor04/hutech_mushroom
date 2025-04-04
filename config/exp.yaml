@@ -27,7 +27,7 @@ normalize: 0
 # optimizier: schedule + earlystopping
 scheduler: "cosine"
 ## StepLR
-scheduler_step: 30
+scheduler_step: 20
 scheduler_gamma: 0.5
 scheduler_warmup: 0.1
 ## AnealLR
