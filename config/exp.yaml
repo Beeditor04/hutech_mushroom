@@ -1,6 +1,6 @@
 project: "hutech_mushroom"
 dataset: "hutech-dataset:latest"
-model: "vit"
+model: "convnext"
 # technique
 pretrained: true
 freeze: false
@@ -32,7 +32,7 @@ es_patience: 10
 num_classes: 4
 lr: 1e-5
 num_epochs: 150
-batch_size: 8
+batch_size: 4
 optimizer: "adamw"
 weight_decay: 0.00025
 momentum: 0.9

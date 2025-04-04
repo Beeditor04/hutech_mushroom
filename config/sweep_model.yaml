@@ -1,5 +1,5 @@
 program: train.py
-name: model_sweep
+name: model_sweep_updated_para
 method: grid
 metric:
   name: test_accuracy

@@ -6,9 +6,9 @@ class ConvNeXt(nn.Module):
     def __init__(self, num_classes=4, freeze=False, include_top=True, pretrained=True):
         super(ConvNeXt, self).__init__()
         if pretrained:
-            self.model = models.convnext_base(weights=models.ConvNeXt_Base_Weights.DEFAULT)
+            self.model = models.convnext_small(weights=models.ConvNeXt_Small_Weights.DEFAULT)
         else:
-            self.model = models.convnext_base(weights=None)
+            self.model = models.convnext_small(weights=None)
         in_features = self.model.classifier[2].in_features
         self.model.classifier[2] = nn.Linear(in_features, num_classes)
         if not include_top:
