@@ -25,7 +25,7 @@ normalize: 0
 # random_erasing: 0.5
 
 # optimizier: schedule + earlystopping
-scheduler: "cosine"
+scheduler: "step"
 ## StepLR
 scheduler_step: 20
 scheduler_gamma: 0.5

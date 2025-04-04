@@ -27,7 +27,7 @@ def get_data_loader(dir, config, mode):
         base_transform = transforms.Compose(transform_list)
     else:
     #train
-        # transform_list.append(transforms.RandomApply([EdgeEnhance()], p=1))
+        transform_list.append(transforms.RandomApply([EdgeEnhance()], p=1))
         # transform_list.append(transforms.RandomApply([EdgeDetectionTransform()], p=1))
         # transform_list.append(transforms.RandomApply([SharpenTransform()], p=1))
         transform_list.append(transforms.Resize(config['resize']))
