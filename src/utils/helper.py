@@ -83,7 +83,7 @@ def get_scheduler(optimizer, config, num_train_steps):
         gamma = config.get('scheduler_gamma', 0.1)
         scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
     elif SCHEDULER == "cosine":
-        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer)
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_train_steps)
     else:
         raise ValueError(f"Invalid scheduler name: {SCHEDULER}")
 
