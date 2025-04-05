@@ -107,16 +107,19 @@ def get_scheduler(optimizer, config, num_train_steps):
 
 def get_loss(config, device):
     LOSS = config.get('loss', 'cross_entropy')
-    is_weight = config.get('class_weights', False)
-    class_weights = None
+    is_weight = config.get('is_weight', False)
+    # class_weights = None
+
     if is_weight:
-        class_counts = [90, 85, 89, 83]
+        print("Using class weights here!!!!")
+        class_counts = [90, 80, 89, 78]
         total = sum(class_counts)
         class_weights = [total / count for count in class_counts]
         class_weights = torch.FloatTensor(class_weights).to(device)
     else:
+        print("Not using class weights here!!!!")
         class_weights = None
-
+    print(f"Class weights: {class_weights}")
     if LOSS == "cross_entropy":
         criterion = torch.nn.CrossEntropyLoss(weight=class_weights)
     elif LOSS == "focal_loss":
