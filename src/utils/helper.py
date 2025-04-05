@@ -170,13 +170,13 @@ class FocalLoss(nn.Module):
         self.weight = weight  # tensor of shape [num_classes]
         self.reduction = reduction
 
-def forward(self, input, target):
-    ce_loss = F.cross_entropy(input, target, weight=self.weight, reduction='none')
-    p_t = torch.exp(-ce_loss)
-    focal_loss = (1 - p_t) ** self.gamma * ce_loss
-    
-    if self.reduction == 'mean':
-        return focal_loss.mean()
-    elif self.reduction == 'sum':
-        return focal_loss.sum()
-    return focal_loss
+    def forward(self, input, target):
+        ce_loss = F.cross_entropy(input, target, weight=self.weight, reduction='none')
+        p_t = torch.exp(-ce_loss)
+        focal_loss = (1 - p_t) ** self.gamma * ce_loss
+        
+        if self.reduction == 'mean':
+            return focal_loss.mean()
+        elif self.reduction == 'sum':
+            return focal_loss.sum()
+        return focal_loss
