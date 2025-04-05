@@ -16,10 +16,9 @@ import wandb
 ## helper
 from loader.loader import get_data_loader
 from utils.metrics import compute_metrics
-from utils.helper import load_config, get_model, get_optimizer, get_scheduler, EarlyStopping, plot_one_batch
+from utils.helper import load_config, get_model, get_optimizer, get_scheduler, EarlyStopping, plot_one_batch, get_loss
 from parsers.parser_train import parse_args
 from utils.setup import set_seed
-
 # device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -130,7 +129,7 @@ def trainer(config=None):
 
     # build optimizer
     optimizer = get_optimizer(model, config)
-    criterion = nn.CrossEntropyLoss()
+    criterion = get_loss(config, device)
     scheduler = get_scheduler(optimizer, config, len(train_loader)*config['num_epochs'])
     early_stopping = EarlyStopping(patience=config['es_patience'])
     # setup log

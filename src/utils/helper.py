@@ -1,6 +1,9 @@
 import yaml 
 import torch 
 import torch.optim as optim
+import torch.nn as nn
+import torch.nn.functional as F
+
 
 def load_config(path):
     with open(path, 'r') as f:
@@ -102,6 +105,26 @@ def get_scheduler(optimizer, config, num_train_steps):
     else:
         return scheduler
 
+def get_loss(config, device):
+    LOSS = config.get('loss', 'cross_entropy')
+    is_weight = config.get('class_weights', False)
+    class_weights = None
+    if is_weight:
+        class_counts = [90, 85, 89, 83]
+        total = sum(class_counts)
+        class_weights = [total / count for count in class_counts]
+        class_weights = torch.FloatTensor(class_weights).to(device)
+    else:
+        class_weights = None
+
+    if LOSS == "cross_entropy":
+        criterion = torch.nn.CrossEntropyLoss(weight=class_weights)
+    elif LOSS == "focal_loss":
+        criterion = FocalLoss(gamma=2.0, weight=class_weights)
+    else:
+        raise ValueError(f"Invalid loss name: {LOSS}")
+    return criterion
+
 def plot_one_batch(loader, batch_size=4, class_names=None):
     images, labels = next(iter(loader))
     print(f"Batch size: {batch_size}")   
@@ -139,3 +162,21 @@ class EarlyStopping():
             if self.counter >= self.patience:
                 return True
     
+
+class FocalLoss(nn.Module):
+    def __init__(self, gamma=2, weight=None, reduction='mean'):
+        super(FocalLoss, self).__init__()
+        self.gamma = gamma
+        self.weight = weight  # tensor of shape [num_classes]
+        self.reduction = reduction
+
+def forward(self, input, target):
+    ce_loss = F.cross_entropy(input, target, weight=self.weight, reduction='none')
+    p_t = torch.exp(-ce_loss)
+    focal_loss = (1 - p_t) ** self.gamma * ce_loss
+    
+    if self.reduction == 'mean':
+        return focal_loss.mean()
+    elif self.reduction == 'sum':
+        return focal_loss.sum()
+    return focal_loss
