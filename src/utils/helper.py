@@ -14,6 +14,7 @@ from models.mini_alexnet import MiniAlexNet
 from models.alexnet import AlexNet
 from models.efficientnet import EfficientNet
 from models.convnext import ConvNeXt
+from models.convnext_tiny import ConvNeXt_Tiny
 from models.densenet import DenseNet
 from models.mobilenet import MobileNetV3
 from models.resnet import ResNet18
@@ -37,6 +38,8 @@ def get_model(name, num_classes, freeze=False, include_top=True, pretrained=True
         model = EfficientNet(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "convnext":
         model = ConvNeXt(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
+    elif name == "convnext_tiny":
+        model = ConvNeXt_Tiny(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "densenet":
         model = DenseNet(num_classes=num_classes, freeze=freeze, include_top=include_top, pretrained=pretrained)
     elif name == "mobilenet":
@@ -123,7 +126,8 @@ def get_loss(config, device):
     if LOSS == "cross_entropy":
         criterion = torch.nn.CrossEntropyLoss(weight=class_weights)
     elif LOSS == "focal_loss":
-        criterion = FocalLoss(gamma=2.0, weight=class_weights)
+        gamma = config.get('focal_loss_gamma', 2.0)
+        criterion = FocalLoss(gamma=gamma, weight=class_weights)
     else:
         raise ValueError(f"Invalid loss name: {LOSS}")
     return criterion

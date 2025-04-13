@@ -8,7 +8,6 @@ import cv2
 import os 
 class EdgeEnhance(object):
     def __call__(self, image):
-        # You can experiment between EDGE_ENHANCE and FIND_EDGES
         return image.filter(ImageFilter.EDGE_ENHANCE)
 
 def get_data_loader(dir, config, mode):
@@ -22,12 +21,15 @@ def get_data_loader(dir, config, mode):
             transforms.Resize(config['resize']),
             transforms.ToTensor(),
         ]
+        if config.get("edge_enhance", 0):
+            transform_list.insert(0, transforms.RandomApply([EdgeEnhance()], p=1))
         if config.get("normalize", 0):
             transform_list.append(transforms.Normalize(mean=config['mean'], std=config['std']))
         base_transform = transforms.Compose(transform_list)
     else:
     #train
-        transform_list.append(transforms.RandomApply([EdgeEnhance()], p=1))
+        if config.get("edge_enhance", 0):
+            transform_list.append(transforms.RandomApply([EdgeEnhance()], p=1))
         # transform_list.append(transforms.RandomApply([EdgeDetectionTransform()], p=1))
         # transform_list.append(transforms.RandomApply([SharpenTransform()], p=1))
         transform_list.append(transforms.Resize(config['resize']))

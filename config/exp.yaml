@@ -1,11 +1,12 @@
 project: "hutech_mushroom"
 dataset: "hutech-dataset:latest"
-model: "convnext"
-# technique
+# dataset: "../data"
+model: "convnext_tiny"
+#*-- technique
 pretrained: true
 freeze: false
 
-# augmentation
+#*-- augmentation
 resize: 224
 horizontal_flip: 0.5
 vertical_flip: 0.5
@@ -16,6 +17,7 @@ random_rotation: 90
 # hue: 0.1
 random_affine: 0.2
 random_perspective: 0.2
+edge_enhance: true
 
 auto_aug: 1
 
@@ -24,26 +26,26 @@ normalize: 0
 # std: [0.229, 0.224, 0.225]
 # random_erasing: 0.1
 
-# optimizier: schedule + earlystopping
+#*-- optimizier: schedule + earlystopping
 scheduler: "cosine"
-# is_warmup: true
-# lr: 0.01
 
 is_warmup: false
+scheduler_warmup: 0.01 # percentage
+
 ## StepLR
 scheduler_step: 20
 scheduler_gamma: 0.5
-scheduler_warmup: 0.1
-## AnealLR
+## CosineAnealLR (default)
+## earlystopping
 es_patience: 200
 
-# hyperparameters
+#*-- hyperparameters
 num_classes: 4
 lr: 1e-5
-num_epochs: 250
+num_epochs: 2
 batch_size: 4
 loss: "cross_entropy"
-is_weight: true
+is_weight: false
 optimizer: "adamw"
 weight_decay: 0.00025
 momentum: 0.9

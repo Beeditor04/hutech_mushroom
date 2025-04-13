@@ -1,6 +1,7 @@
 base/*
 data/*
 models/*
+weights/*
 __pycache__/*
 final_test/*
 

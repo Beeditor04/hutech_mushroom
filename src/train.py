@@ -11,8 +11,6 @@ from tqdm import tqdm
 import os
 import wandb
 
-# src function
-
 ## helper
 from loader.loader import get_data_loader
 from utils.metrics import compute_metrics
@@ -21,6 +19,16 @@ from parsers.parser_train import parse_args
 from utils.setup import set_seed
 # device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+class DummyWandb:
+    def init(self, *args, **kwargs):
+        return self
+    def log(self, *args, **kwargs):
+        pass
+    def finish(self):
+        pass
+    def __getattr__(self, attr):
+        # Any other wandb calls just become no-ops.
+        return lambda *args, **kwargs: None
 
 def train_one_epoch(model, loader, optimizer, criterion):
     model.train()
@@ -97,21 +105,25 @@ def trainer(config=None):
     PROJECT = "hutech_mushroom"
     run = None
     #setup wandb
-    if config is None:
-        run = wandb.init(project=PROJECT)
-    else: 
-        run = wandb.init(project=PROJECT, config=config)
-        run.config.update(config)
+    if args.wandb:
+        if config is None:
+            run = wandb.init(project=PROJECT)
+        else: 
+            run = wandb.init(project=PROJECT, config=config)
+            run.config.update(config)
+        config = run.config
+    else:
+        run = DummyWandb()
 
-    print("here config!!!", config)
-    config = run.config
     print("HERE config!", config)
 
     DATASET = config['dataset']
-
     ## versioning datasets
-    artifact_data = run.use_artifact(f"beehappy2554-bosch-global/{PROJECT}/{DATASET}", type='dataset')
-    artifact_data_dir = artifact_data.download()
+    if args.wandb:
+        artifact_data = run.use_artifact(f"nhomcs331-beeditor/{PROJECT}/{DATASET}", type='dataset')
+        artifact_data_dir = artifact_data.download()
+    else:
+        artifact_data_dir = config['dataset']
     print(config)
     # build dataset
     train_loader = get_data_loader(artifact_data_dir, config, mode="train")
@@ -137,7 +149,7 @@ def trainer(config=None):
     TOTAL_PARAMS = sum(p.numel() for p in model.parameters())
     TOTAL_TRAINABLE_PARAMS = sum(p.numel() for p in model.parameters() if p.requires_grad)
     
-    timestamp = time.strftime("%Y-%m-%d-%H:%M:%S")
+    timestamp = time.strftime("%Y-%m-%d-%H-%M-%S")
     print("Training model...")
     print(f"Device: {device}")
     print(f"Number of epochs: {EPOCHS}")
@@ -151,7 +163,7 @@ def trainer(config=None):
     print(f"Dataset: {len(train_loader.dataset)} training samples, {len(val_loader.dataset)} validation samples")
 
     # Save model
-    model_dir = "../models"
+    model_dir = "../weights"
     os.makedirs(model_dir, exist_ok=True)
     model_path = os.path.join(model_dir, f"best-{config['model']}-{timestamp}.pt")
     print(f"Model will be saved at {model_path}")
@@ -202,6 +214,7 @@ def trainer(config=None):
     print(f"Test time: {inference_time:.2f} seconds")
     print(f"Test Accuracy: {accuracy:.4f}")
 
+    # Log test results on wandb
     table = wandb.Table(columns=["inference_time", "test_accuracy"])
     table.add_data(inference_time, accuracy)
     run.log({"test_acc vs time": wandb.plot.scatter(
