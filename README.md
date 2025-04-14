@@ -1,4 +1,6 @@
 hello world, this is **wandb** tutorial
+link demo: https://drive.google.com/file/d/1anj62MQjMHkuuF3zQU_g0dF1jtjo8vPp/view?usp=drive_link
+
 # Members
 | Name                | MSSV      | Roles  |
 |---------------------|-----------|--------|

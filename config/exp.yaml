@@ -42,8 +42,8 @@ es_patience: 200
 #*-- hyperparameters
 num_classes: 4
 lr: 1e-5
-num_epochs: 2
-batch_size: 4
+num_epochs: 1
+batch_size: 2
 loss: "cross_entropy"
 is_weight: false
 optimizer: "adamw"
