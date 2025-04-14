@@ -4,7 +4,7 @@ hello world, this is **wandb** tutorial
 |---------------------|-----------|--------|
 | Nguyễn Hữu Nam      | 22520917  | Leader |
 | Nguyễn Khánh        | asdas  | Member |
-| Nguyễn Minh Sơn        | asdsd  | Member |
+| Nguyễn Minh Sơn        | 22521254  | Member |
 
 # Structure
 ```python
