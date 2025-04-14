@@ -3,7 +3,7 @@ hello world, this is **wandb** tutorial
 | Name                | MSSV      | Roles  |
 |---------------------|-----------|--------|
 | Nguyễn Hữu Nam      | 22520917  | Leader |
-| Nguyễn Khánh        | asdas  | Member |
+| Nguyễn Khánh        | 22520641  | Member |
 | Nguyễn Minh Sơn        | 22521254  | Member |
 
 # Structure
