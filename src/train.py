@@ -117,10 +117,11 @@ def trainer(config=None):
 
     print("HERE config!", config)
 
-    DATASET = config['dataset']
+    DATASET_DIR = config['dataset']
     ## versioning datasets
     if args.wandb:
-        artifact_data = run.use_artifact(f"nhomcs331-beeditor/{PROJECT}/{DATASET}", type='dataset')
+        ENTITY = run.entity 
+        artifact_data = run.use_artifact(f"{ENTITY}/{PROJECT}/{DATASET_DIR}", type='dataset')
         artifact_data_dir = artifact_data.download()
     else:
         artifact_data_dir = config['dataset']
