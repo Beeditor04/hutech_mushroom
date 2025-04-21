@@ -3,7 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as transforms
 from torchvision import datasets
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
+
 import torch.optim as optim
 import time
 from tqdm import tqdm
@@ -12,11 +13,12 @@ import os
 import wandb
 
 ## helper
-from loader.loader import get_data_loader
+from loader.loader import get_dataset, get_loader
 from utils.metrics import compute_metrics
 from utils.helper import load_config, get_model, get_optimizer, get_scheduler, EarlyStopping, plot_one_batch, get_loss
 from parsers.parser_train import parse_args
 from utils.setup import set_seed
+
 # device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class DummyWandb:
@@ -78,8 +80,8 @@ def test(model, loader):
     all_labels = []
     with torch.no_grad():
         for inputs, labels in loader:
-            inputs = inputs.to("cpu")
-            labels = labels.to("cpu")
+            inputs = inputs.to(device)
+            labels = labels.to(device)
 
             outputs = model(inputs)
             _, preds = torch.max(outputs, 1)
@@ -126,15 +128,22 @@ def trainer(config=None):
     else:
         artifact_data_dir = config['dataset']
     print(config)
-    # build dataset
-    train_loader = get_data_loader(artifact_data_dir, config, mode="train")
-    val_loader = get_data_loader(artifact_data_dir, config, mode="val")
+    # build dataset 
+    full_train_dataset = get_dataset(artifact_data_dir, config, mode="train")
+    VAL_SIZE = 0.3
+    val_size = int(VAL_SIZE * len(full_train_dataset))
+    train_size = len(full_train_dataset) - val_size
+    train_subset, val_subset = random_split(full_train_dataset, [train_size, val_size])
+
+    train_loader = get_loader(train_subset, batch_size=config["batch_size"], shuffle=True)
+    val_loader = get_loader(val_subset, batch_size=1, shuffle=False)
+
     class_names = ["nấm mỡ", "nấm bào ngư", "nấm đùi gà", "nấm linh chi trắng"] 
     plot_one_batch(train_loader, config['batch_size'], class_names)
     # build model
     model = get_model(
         name=config['model'], 
-        num_classes=len(train_loader.dataset.classes),
+        num_classes=len(full_train_dataset.classes),
         freeze=config['freeze'],
         pretrained=config['pretrained']
         )
@@ -192,7 +201,8 @@ def trainer(config=None):
 
     # final verdict: test
     print("Testing model...")
-    test_loader = get_data_loader(artifact_data_dir, config, mode="test")
+    test_dataset = get_dataset(artifact_data_dir, config, mode="test")
+    test_loader = get_loader(test_dataset, batch_size=1, shuffle=False)
     
     model = get_model(
         config['model'], 
@@ -202,7 +212,7 @@ def trainer(config=None):
         )
     model.load_state_dict(torch.load(model_path, weights_only=True))
     model.eval()
-    model.to("cpu")
+    model.to(device)
     
     start_time = time.time()
     preds, labels = test(model, test_loader)
