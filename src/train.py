@@ -1,11 +1,7 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torchvision.transforms as transforms
-from torchvision import datasets
-from torch.utils.data import DataLoader, random_split
 
-import torch.optim as optim
+from torch.utils.data import random_split
+
 import time
 from tqdm import tqdm
 
@@ -139,7 +135,7 @@ def trainer(config=None):
     val_loader = get_loader(val_subset, batch_size=1, shuffle=False)
 
     class_names = ["nấm mỡ", "nấm bào ngư", "nấm đùi gà", "nấm linh chi trắng"] 
-    plot_one_batch(train_loader, config['batch_size'], class_names)
+    # plot_one_batch(train_loader, config['batch_size'], class_names)
     # build model
     model = get_model(
         name=config['model'], 

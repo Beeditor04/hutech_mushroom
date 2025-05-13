@@ -7,7 +7,7 @@ metric:
 parameters:
   # model (sweep)
   model:
-    values: ["convnext", "efficientnet", "mobilenet", "resnet", "vit", "regnet", "shufflenet"]
+    values: ["convnext", "efficientnet", "mobilenet", "resnet", "vit"]
   dataset:
     value: "hutech-dataset:latest"
   freeze:
@@ -23,26 +23,12 @@ parameters:
     values: [0.5]
   random_rotation:
     values: [90]
-  brightness:
-    values: [0.2]
-  contrast:
-    values: [0.2]
-  saturation:
-    values: [0.2]
-  hue:
-    values: [0.2]
   random_affine:
     values: [0.2]
   random_perspective:
     values: [0.2]
   auto_aug:
     values: [1] 
-  normalize: 
-    values: [0, 1]
-  mean:
-    value: [0.485, 0.456, 0.406]
-  std:
-    value: [0.229, 0.224, 0.225]
   # hyperparameters (fixed)
   num_classes:
     value: 4

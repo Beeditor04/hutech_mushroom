@@ -1,5 +1,5 @@
 project: "hutech_mushroom"
-dataset: "hutech-dataset:latest"
+dataset: "../data"
 # dataset: "../data"
 model: "convnext_tiny"
 #*-- technique

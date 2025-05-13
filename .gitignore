@@ -14,5 +14,6 @@ wandb/*
 *.env
 *.zip
 *.pt
+*.csv
 
 # folder
