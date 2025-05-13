@@ -1,19 +1,20 @@
 import torch
 import torch.nn as nn
-import timm
+from torchvision import models
 
 class TinyViT(nn.Module):
     def __init__(self, num_classes=4, freeze=False, include_top=True, pretrained=True):
         super(TinyViT, self).__init__()
-        self.model = timm.create_model("vit_small_patch32_224", pretrained=pretrained)
-        in_features = self.model.head.in_features
-        self.model.reset_classifier(num_classes=num_classes)
+        self.model = models.vit_h_14(weights=models.ViT_H_14_Weights.IMAGENET1K_SWAG_E2E_V1)
+        in_features = self.model.heads.in_features
+        self.model.heads = nn.Linear(in_features, num_classes)
         if not include_top:
-            self.model.reset_classifier(num_classes=0)
-        if freeze:
+            self.model.heads = nn.Identity()
+        if freeze and pretrained:
             for param in self.model.parameters():
                 param.requires_grad = False
-            for param in self.model.head.parameters():
+            for param in self.model.classifier.parameters():
                 param.requires_grad = True
+        
     def forward(self, x):
         return self.model(x)

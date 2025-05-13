@@ -41,7 +41,7 @@ parameters:
   optimizer:
     value: "adamw"
   scheduler: 
-    value: "step"
+    value: "cosine"
   es_patience: 
     value: 10
   weight_decay:
